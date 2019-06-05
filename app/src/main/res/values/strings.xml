@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">High/Low sign in</string>
+    <string name="high_low">High/Low</string>
+    <string name = "forgotText">No worries. It happens to the best of us. Just enter your email below, and we\'ll send a conformation message so you can get back on track!</string>
+</resources>
