@@ -1,5 +1,6 @@
 package com.example.highlowsignin;
 
+import android.content.Intent;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -25,7 +26,7 @@ public class ForgotPassword extends AppCompatActivity {
 
 
 
-        String url = "https://api.gethighlow.com/auth/sign_in";
+        String url = "https://api.gethighlow.com/auth/forgot_password";
 
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
@@ -65,6 +66,7 @@ public class ForgotPassword extends AppCompatActivity {
 
     }
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,5 +74,9 @@ public class ForgotPassword extends AppCompatActivity {
     }
 
 
+    public void exit(View view) {
+        Intent intent = new Intent(getBaseContext(), MainActivity.class);
+        startActivity(intent);
+    }
 }
 
