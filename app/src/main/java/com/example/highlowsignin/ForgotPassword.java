@@ -18,6 +18,7 @@ import com.android.volley.toolbox.Volley;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 public class ForgotPassword extends AppCompatActivity {
 
@@ -33,8 +34,15 @@ public class ForgotPassword extends AppCompatActivity {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Toast.makeText(ForgotPassword.this,response,Toast.LENGTH_LONG).show();
-                        VolleyLog.v("Response:%n %s", response.toString());
+
+                        if(response.contains("success")){
+                            Toast.makeText(ForgotPassword.this,"Please check your email to reset your password",Toast.LENGTH_LONG).show();
+
+                        } else {
+                            Toast.makeText(ForgotPassword.this,"There was an error, please make sure your email is correct and try again.",Toast.LENGTH_LONG).show();
+
+                        }
+
                     }
                 },
                 new Response.ErrorListener() {
