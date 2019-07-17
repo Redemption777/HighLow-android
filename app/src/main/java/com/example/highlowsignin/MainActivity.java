@@ -2,7 +2,9 @@ package com.example.highlowsignin;
 
 
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,15 +15,20 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -37,8 +44,6 @@ public class MainActivity extends AppCompatActivity {
 
          final String inputEmail = email.getText().toString();
          final String inputPassword = password.getText().toString();
-         Log.d("Email", inputEmail);
-         Log.d("Password", inputPassword);
 
         String url = "https://api.gethighlow.com/auth/sign_in";
 
@@ -47,8 +52,33 @@ public class MainActivity extends AppCompatActivity {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Toast.makeText(MainActivity.this,response,Toast.LENGTH_LONG).show();
-                        VolleyLog.v("Response:%n %s", response.toString());
+                        try {
+                            //Creating JsonObject from response String
+                            JSONObject jsonObject= new JSONObject(response);
+
+                            if(jsonObject.has("error")){
+
+                                String error = jsonObject.getString("error");
+                                Toast.makeText(MainActivity.this,"Error: " + error,Toast.LENGTH_LONG).show();
+                                VolleyLog.v("Error:%n %s", error.toString());
+
+                            } else{
+
+                                String access = jsonObject.getString("access");
+                                String refresh = jsonObject.getString("refresh");
+                                String uid = jsonObject.getString("uid");
+                                Toast.makeText(MainActivity.this,"ACCESS: " + access,Toast.LENGTH_LONG).show();
+                                Toast.makeText(MainActivity.this,"REFRESH: " + refresh,Toast.LENGTH_LONG).show();
+                                Toast.makeText(MainActivity.this,"UID: " + uid, Toast.LENGTH_SHORT).show();
+                                VolleyLog.v("Response:%n %s", jsonObject.toString());
+
+                                //TODO have code that updates the shared preference with the access token and refresh token
+                            }
+
+                        } catch (JSONException e) {
+                            Log.v("JSONError", e.getMessage());
+                        }
+
                     }
                 },
                 new Response.ErrorListener() {
@@ -58,6 +88,7 @@ public class MainActivity extends AppCompatActivity {
                         VolleyLog.e("Error: ", error.getMessage());
                     }
                 }){
+
             @Override
             protected Map<String,String> getParams(){
                 Map<String,String> params = new HashMap<String, String>();
@@ -70,8 +101,13 @@ public class MainActivity extends AppCompatActivity {
 
         queue.add(stringRequest);
 
-    }
 
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                10000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+    }
 
 
     @Override

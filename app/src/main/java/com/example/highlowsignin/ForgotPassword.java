@@ -35,6 +35,7 @@ public class ForgotPassword extends AppCompatActivity {
                     @Override
                     public void onResponse(String response) {
 
+
                         if(response.contains("success")){
                             Toast.makeText(ForgotPassword.this,"Please check your email to reset your password",Toast.LENGTH_LONG).show();
 

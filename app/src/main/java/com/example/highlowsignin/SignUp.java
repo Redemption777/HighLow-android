@@ -46,8 +46,11 @@ public class SignUp extends AppCompatActivity {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
+
                         Toast.makeText(SignUp.this,response,Toast.LENGTH_LONG).show();
                         VolleyLog.v("Response:%n %s", response.toString());
+
+                        //TODO add error messages
                     }
                 },
                 new Response.ErrorListener() {
