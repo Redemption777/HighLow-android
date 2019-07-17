@@ -5,12 +5,13 @@ package com.example.highlowsignin;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.WindowManager;
+
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,12 +22,12 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
-import com.android.volley.toolbox.JsonObjectRequest;
+
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 
-import org.json.JSONArray;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -56,13 +57,13 @@ public class MainActivity extends AppCompatActivity {
                             //Creating JsonObject from response String
                             JSONObject jsonObject= new JSONObject(response);
 
-                            if(jsonObject.has("error")){
+                            if(jsonObject.has("error")){ //If the jsonObject has an error than display the error
 
                                 String error = jsonObject.getString("error");
                                 Toast.makeText(MainActivity.this,"Error: " + error,Toast.LENGTH_LONG).show();
                                 VolleyLog.v("Error:%n %s", error.toString());
 
-                            } else{
+                            } else{ //If there is not an error than display and save the access and refresh tokens
 
                                 String access = jsonObject.getString("access");
                                 String refresh = jsonObject.getString("refresh");
@@ -72,7 +73,27 @@ public class MainActivity extends AppCompatActivity {
                                 Toast.makeText(MainActivity.this,"UID: " + uid, Toast.LENGTH_SHORT).show();
                                 VolleyLog.v("Response:%n %s", jsonObject.toString());
 
-                                //TODO have code that updates the shared preference with the access token and refresh token
+
+                                SharedPreferences pref = getApplicationContext().getSharedPreferences("Tokens", 0); // 0 - for private mode
+                                SharedPreferences.Editor editor = pref.edit();
+
+                                editor.putString("ACCESS_TOKEN", access); // Storing access token as a string
+                                editor.putString("REFRESH_TOKEN", refresh); // Storing refresh token as a string
+
+                                editor.apply(); // commit changes
+
+                                /*Now to retrieve the tokens you need to initialize the preferences like this:
+
+                                 SharedPreferences pref = getApplicationContext().getSharedPreferences("Tokens", 0);
+
+                                 and then retrieve the data like this:
+
+                                 pref.getString("ACCESS_TOKEN");
+
+                                 and
+
+                                 pref.getString("REFRESH_TOKEN");
+                                 */
                             }
 
                         } catch (JSONException e) {
@@ -103,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         stringRequest.setRetryPolicy(new DefaultRetryPolicy(
-                10000,
+                10000, //Increases the Volley timeout to 10000 milliseconds or 10 seconds
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
